@@ -6,144 +6,13 @@
 	<title>THEOplayer Custom Control</title>
 	<link rel="stylesheet" type="text/css" href="https://cdn.myth.theoplayer.com/0944d0a8-84c3-40f6-9649-52be4de8ff3c/ui.css"
 	/>
+  	<link href="style.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<script src="https://cdn.myth.theoplayer.com/94df6cfd-9b33-4d43-8d27-1f611a4f73f6/THEOplayer.js">
 
 	</script>
 	<style>
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			height: 100%;
-		}
-
-		.theoplayer-container {
-			width: 100%;
-			height: 100%;
-		}
-
-		#control-bar-mvm {
-			display: grid;
-			grid-template-columns: repeat(5, 1fr);
-			gap: 10px;
-			border: 1px solid red;
-			z-index: 1000;
-			position: relative;
-			color: white;
-			background: rgba(1, 1, 1, 0.5);
-		}
-
-		.material-icons {
-			cursor: pointer;
-			-webkit-user-select: none;
-			/* Safari */
-			-moz-user-select: none;
-			/* Firefox */
-			-ms-user-select: none;
-			/* IE10+/Edge */
-			user-select: none;
-			/* Standard */
-		}
-
-		input[type=range] {
-			-webkit-appearance: none;
-			margin: 18px 0;
-			width: 100%;
-		}
-
-		input[type=range]:focus {
-			outline: none;
-		}
-
-		input[type=range]::-webkit-slider-runnable-track {
-			width: 100%;
-			height: 8.4px;
-			cursor: pointer;
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			background: #3071a9;
-			border-radius: 1.3px;
-			border: 0.2px solid #010101;
-		}
-
-		input[type=range]::-webkit-slider-thumb {
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			border: 1px solid #000000;
-			height: 36px;
-			width: 16px;
-			border-radius: 3px;
-			background: #ffffff;
-			cursor: pointer;
-			-webkit-appearance: none;
-			margin-top: -14px;
-		}
-
-		input[type=range]:focus::-webkit-slider-runnable-track {
-			background: #367ebd;
-		}
-
-		input[type=range]::-moz-range-track {
-			width: 100%;
-			height: 8.4px;
-			cursor: pointer;
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			background: #3071a9;
-			border-radius: 1.3px;
-			border: 0.2px solid #010101;
-		}
-
-		input[type=range]::-moz-range-thumb {
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			border: 1px solid #000000;
-			height: 36px;
-			width: 16px;
-			border-radius: 3px;
-			background: #ffffff;
-			cursor: pointer;
-		}
-
-		input[type=range]::-ms-track {
-			width: 100%;
-			height: 8.4px;
-			cursor: pointer;
-			background: transparent;
-			border-color: transparent;
-			border-width: 16px 0;
-			color: transparent;
-		}
-
-		input[type=range]::-ms-fill-lower {
-			background: #2a6495;
-			border: 0.2px solid #010101;
-			border-radius: 2.6px;
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-		}
-
-		input[type=range]::-ms-fill-upper {
-			background: #3071a9;
-			border: 0.2px solid #010101;
-			border-radius: 2.6px;
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-		}
-
-		input[type=range]::-ms-thumb {
-			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			border: 1px solid #000000;
-			height: 36px;
-			width: 16px;
-			border-radius: 3px;
-			background: #ffffff;
-			cursor: pointer;
-		}
-
-		input[type=range]:focus::-ms-fill-lower {
-			background: #3071a9;
-		}
-
-		input[type=range]:focus::-ms-fill-upper {
-			background: #367ebd;
-		}
+		
 	</style>
 </head>
 
@@ -159,8 +28,11 @@
 	</div>
 
 	<script>
+    const CHROMELESS = true;
 		var element = document.querySelector(".theoplayer-container");
-      var player = new THEOplayer.Player(element, {
+    var player;
+    if (!CHROMELESS) {
+      player = new THEOplayer.Player(element, {
         libraryLocation:
           "https://cdn.myth.theoplayer.com/94df6cfd-9b33-4d43-8d27-1f611a4f73f6/",
         ui: {
@@ -168,12 +40,22 @@
           height: "100%"
         }
       });
+    } else {
+      player = new THEOplayer.ChromelessPlayer(element, {
+        libraryLocation:
+          "https://cdn.myth.theoplayer.com/94df6cfd-9b33-4d43-8d27-1f611a4f73f6/",
+        ui: {
+          width: "100%",
+          height: "100%"
+        }
+      });
+    }
 
       registerControlBar(player);
       
 
       player.muted = true;
-      player.src = "https://content.uplynk.com/bd922d33be2c46809c7102194a7490aa.m3u8?rays=ebcdf";
+      player.src = "//cdn.theoplayer.com/video/elephants-dream/playlist.m3u8";
 
       function registerControlBar(player) {
       let paused = true;
