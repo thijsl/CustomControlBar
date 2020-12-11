@@ -1,0 +1,326 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<title>THEOplayer Custom Control</title>
+	<link rel="stylesheet" type="text/css" href="https://cdn.myth.theoplayer.com/0944d0a8-84c3-40f6-9649-52be4de8ff3c/ui.css"
+	/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src="https://cdn.myth.theoplayer.com/94df6cfd-9b33-4d43-8d27-1f611a4f73f6/THEOplayer.js">
+
+	</script>
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.theoplayer-container {
+			width: 100%;
+			height: 100%;
+		}
+
+		#control-bar-mvm {
+			display: grid;
+			grid-template-columns: repeat(5, 1fr);
+			gap: 10px;
+			border: 1px solid red;
+			z-index: 1000;
+			position: relative;
+			color: white;
+			background: rgba(1, 1, 1, 0.5);
+		}
+
+		.material-icons {
+			cursor: pointer;
+			-webkit-user-select: none;
+			/* Safari */
+			-moz-user-select: none;
+			/* Firefox */
+			-ms-user-select: none;
+			/* IE10+/Edge */
+			user-select: none;
+			/* Standard */
+		}
+
+		input[type=range] {
+			-webkit-appearance: none;
+			margin: 18px 0;
+			width: 100%;
+		}
+
+		input[type=range]:focus {
+			outline: none;
+		}
+
+		input[type=range]::-webkit-slider-runnable-track {
+			width: 100%;
+			height: 8.4px;
+			cursor: pointer;
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			background: #3071a9;
+			border-radius: 1.3px;
+			border: 0.2px solid #010101;
+		}
+
+		input[type=range]::-webkit-slider-thumb {
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			border: 1px solid #000000;
+			height: 36px;
+			width: 16px;
+			border-radius: 3px;
+			background: #ffffff;
+			cursor: pointer;
+			-webkit-appearance: none;
+			margin-top: -14px;
+		}
+
+		input[type=range]:focus::-webkit-slider-runnable-track {
+			background: #367ebd;
+		}
+
+		input[type=range]::-moz-range-track {
+			width: 100%;
+			height: 8.4px;
+			cursor: pointer;
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			background: #3071a9;
+			border-radius: 1.3px;
+			border: 0.2px solid #010101;
+		}
+
+		input[type=range]::-moz-range-thumb {
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			border: 1px solid #000000;
+			height: 36px;
+			width: 16px;
+			border-radius: 3px;
+			background: #ffffff;
+			cursor: pointer;
+		}
+
+		input[type=range]::-ms-track {
+			width: 100%;
+			height: 8.4px;
+			cursor: pointer;
+			background: transparent;
+			border-color: transparent;
+			border-width: 16px 0;
+			color: transparent;
+		}
+
+		input[type=range]::-ms-fill-lower {
+			background: #2a6495;
+			border: 0.2px solid #010101;
+			border-radius: 2.6px;
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+		}
+
+		input[type=range]::-ms-fill-upper {
+			background: #3071a9;
+			border: 0.2px solid #010101;
+			border-radius: 2.6px;
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+		}
+
+		input[type=range]::-ms-thumb {
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			border: 1px solid #000000;
+			height: 36px;
+			width: 16px;
+			border-radius: 3px;
+			background: #ffffff;
+			cursor: pointer;
+		}
+
+		input[type=range]:focus::-ms-fill-lower {
+			background: #3071a9;
+		}
+
+		input[type=range]:focus::-ms-fill-upper {
+			background: #367ebd;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="theoplayer-container video-js theoplayer-skin">
+		<div id="control-bar-mvm">
+			<div>Play</div>
+			<div>Mute</div>
+			<div>Slide Volume</div>
+			<div>Seek</div>
+			<div>Fullscreen</div>
+		</div>
+	</div>
+
+	<script>
+		var element = document.querySelector(".theoplayer-container");
+      var player = new THEOplayer.Player(element, {
+        libraryLocation:
+          "https://cdn.myth.theoplayer.com/94df6cfd-9b33-4d43-8d27-1f611a4f73f6/",
+        ui: {
+          width: "100%",
+          height: "100%"
+        }
+      });
+
+      registerControlBar(player);
+      
+
+      player.muted = true;
+      player.src = "https://content.uplynk.com/bd922d33be2c46809c7102194a7490aa.m3u8?rays=ebcdf";
+
+      function registerControlBar(player) {
+      let paused = true;
+      let fullscreen = false;
+
+      function changeIcon(icon, materialIcon) {
+        icon.querySelector('span').innerText = materialIcon;
+      }
+
+      function registerControlBarEvents(player) {
+        const playIcon = document.querySelector("#control-bar-mvm-playPause");
+        const muteIcon = document.querySelector("#control-bar-mvm-mute");
+        const volumeIcon = document.querySelector("#control-bar-mvm-volume");
+        const seekbarIcon = document.querySelector("#control-bar-mvm-seekbar");
+        const fullscreenIcon = document.querySelector("#control-bar-mvm-fullscreen");
+        player.addEventListener('playing', function(e) {
+          changeIcon(playIcon, "pause");
+          paused = false;
+        });
+        player.addEventListener('pause', function(e) {
+          paused = true;
+          changeIcon(playIcon, "play_arrow")
+          playIcon.querySelector('span').innerText = "play_arrow";
+        });
+        player.addEventListener('volumechange', function(e) {
+          muted = player.muted;
+          if (player.muted) {
+            changeIcon(muteIcon, "volume_off")
+          } else {
+            if (player.volume >= 0.5) {
+              changeIcon(muteIcon, "volume_up");
+            } else if (player.volume >= 0.1) {
+              changeIcon(muteIcon, "volume_down");
+            } else {
+              changeIcon(muteIcon, "volume_mute");
+            }
+          }
+          volumeIcon.value = player.volume;
+        });
+        player.addEventListener('durationchange', function(e) {
+          seekbarIcon.max = player.duration;
+          // console.log("The duration of the video is:", player.duration);
+        });
+        player.addEventListener('timeupdate', function(e) {
+          seekbarIcon.value = player.currentTime;
+          // console.log("The playhead position of the video is:", player.currentTime);
+        });
+        player.presentation.addEventListener('presentationmodechange', function(e) {
+          const newMode = e.presentationMode;
+          if (newMode == "inline") {
+            fullscreen = false;
+            changeIcon(fullscreenIcon, "fullscreen");
+          } else if (newMode == "fullscreen") {
+            fullscreen = true;
+            changeIcon(fullscreenIcon, "fullscreen_exit");
+          }
+        })
+      }
+
+      function createControlBar() {
+        const controlBar = document.querySelector("#control-bar-mvm");
+        createPlayPauseButton(controlBar);
+        createMuteUnmuteButton(controlBar);
+        createVolumeSlider(controlBar);
+        createSeekBar(controlBar);
+        createFullscreenButton(controlBar);
+      }
+
+      function createPlayPauseButton(controlBar) {
+        const playIcon = document.createElement('div');
+        playIcon.id = "control-bar-mvm-playPause";
+        playIcon.innerHTML = '<span class="material-icons">play_arrow</span>';
+        playIcon.addEventListener('click', function(e) {
+          if (paused) {
+            player.play();
+          } else {
+            player.pause();
+          }
+        });
+        controlBar.appendChild(playIcon);
+      }
+
+      let muted = true;
+      function createMuteUnmuteButton(controlBar) {
+        const muteIcon = document.createElement('div');
+        muteIcon.id = "control-bar-mvm-mute";
+        muteIcon.innerHTML = '<span class="material-icons">volume_up</span>';
+        muteIcon.addEventListener('click', function(e) {
+          if (muted) {
+            player.muted = false;
+          } else {
+            player.muted = true;
+          }
+        });
+        controlBar.appendChild(muteIcon);
+      }
+
+      function createVolumeSlider(controlBar) {
+        const volumeIconContainer = document.createElement('div');
+        volumeIconContainer.id = "volume-icon-container";
+        const volumeIcon = document.createElement('input');
+        volumeIcon.type = "range";
+        volumeIcon.id = "control-bar-mvm-volume";
+        volumeIcon.min = 0;
+        volumeIcon.max = 1;
+        volumeIcon.step = 0.01;
+        volumeIcon.addEventListener('change', function(e) {
+          const newVolume = e.target.value;
+          player.volume = newVolume;
+        });
+        volumeIconContainer.appendChild(volumeIcon);
+        controlBar.appendChild(volumeIconContainer);
+      }
+
+      function createSeekBar(controlBar) {
+        const seekbarIconContainer = document.createElement('div');
+        seekbarIconContainer.id = "seekbar-icon-container";
+        const seekbarIcon = document.createElement('input');
+        seekbarIcon.type = "range";
+        seekbarIcon.id = "control-bar-mvm-seekbar";
+        seekbarIcon.min = 0;
+        seekbarIcon.max = 100;
+        seekbarIcon.addEventListener('change', function(e) {
+          const newPosition = e.target.value;
+          player.currentTime = newPosition;
+        });
+        seekbarIconContainer.appendChild(seekbarIcon);
+        controlBar.appendChild(seekbarIconContainer);
+      }
+
+      function createFullscreenButton(controlBar) {
+        const fullscreenIcon = document.createElement('div');
+        fullscreenIcon.id = "control-bar-mvm-fullscreen";
+        fullscreenIcon.innerHTML = '<span class="material-icons">fullscreen</span>';
+        fullscreenIcon.addEventListener('click', function(e) {
+          if (fullscreen) {
+            player.presentation.requestMode('inline');
+          } else {
+            player.presentation.requestMode('fullscreen');
+          }
+        });
+        controlBar.appendChild(fullscreenIcon);
+      }
+          createControlBar();
+          registerControlBarEvents(player);
+      }
+	</script>
+</body>
+
+</html>
